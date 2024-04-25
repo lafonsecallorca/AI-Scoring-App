@@ -26,9 +26,7 @@ def extract_answer_keys(summary, section):
     # If the "Answers:" section exists and there's at least one part after it
     if len(parts) > 1:
         # Extract the text after the "Answers:" section
-        if section == "Answers:":
-            answer_keys_section = parts[1].strip()
-
+       
         answer_keys_section = parts[1].strip()
         
         # Split the answer keys section into individual lines
@@ -36,41 +34,38 @@ def extract_answer_keys(summary, section):
         
         # Initialize an empty list to store answer keys
         answer_keys = []
-        
-        # Iterate through each line to extract answer keys
+
         for line in lines:
-            # Skip any empty lines
-            if line.strip() != "":
-                # Add the line to the list of answer keys
+            # Skip any empty lines and the section label
+            if line.strip() != "" and not line.startswith("Answers:"):
+                # Add the line to the list of questions
                 answer_keys.append(line.strip())
-        
+
         return answer_keys
     else:
         return None
 
 def save_to_file(contents, filename):
-    st.write("Custom save_to_file function: Saves contents to a file.")
     with open(filename, "w") as file:
         for line in contents:
             file.write(line + "\n")
 
-st.title("Exam Q&A")
-user_text_input = st.text_input("Enter the text you would like to summarize:")
+st.title("Exam Generator")
+user_text_input = st.text_input("Enter the text you would like the exam to be on:")
 
 
-if st.button("Get Summary"):
+if st.button("Generate"):
     examq_a = generate_qa(user_text_input, prompt)
     #if summary.prompt_feedback:
     #    print(summary.prompt_feedback)
-    ans_section = "Answers:"
-    qs_section = "Questions:"
+    ans_section = "Answers:**"
+    qs_section = "Questions:**"
     answer_key = extract_answer_keys(examq_a, ans_section )
     question_key = extract_answer_keys(examq_a, qs_section)
     answer_file = "answers.txt"
     question_file = "questions.txt"
     save_to_file(answer_key, answer_file)
     save_to_file(question_key, question_file)
-    save_to_file
     st.markdown("AI Q&A:")
     st.write(examq_a)
    
