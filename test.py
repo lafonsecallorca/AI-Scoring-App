@@ -2,9 +2,24 @@ import streamlit as st
 import speech_recognition as sr
 import spacy
 import en_core_web_md
+from dotenv import load_dotenv
+import google.generativeai as genai
+import os 
+import time
+
+load_dotenv() #this will load all env variables
+
+genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 
 nlp = en_core_web_md.load()
 
+prompt="""You are an exam grader that will  : """
+
+def generate_qa(original_text, prompt):
+    model=genai.GenerativeModel("gemini-pro")
+
+    response=model.generate_content(prompt+original_text)
+    return response.text
 
 def read_questions_from_file(file_path):
     with open(file_path, 'r') as file:
@@ -41,6 +56,7 @@ def main():
         if record_button:
             st.session_state.stop_recording = False
             with sr.Microphone() as source:
+                  time.sleep(1) 
                   st.write("Say something...")
                   r = sr.Recognizer()
                   r.adjust_for_ambient_noise(source)
